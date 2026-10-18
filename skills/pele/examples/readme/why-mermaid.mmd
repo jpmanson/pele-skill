@@ -1,0 +1,12 @@
+venn-beta
+  title Why the agent writes Mermaid
+  set H["People read it"]
+    text H1["reviews"]
+  set A["Agents write it"]
+    text A1["plain text"]
+  set G["Git diffs it"]
+    text G1["line history"]
+  union H,A["Chat"]
+  union A,G["Repos"]
+  union H,G["Docs"]
+  union H,A,G["Mermaid"]

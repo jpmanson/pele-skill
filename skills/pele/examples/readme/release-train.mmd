@@ -1,0 +1,22 @@
+gitGraph
+  commit id: "init"
+  commit id: "render.mjs" tag: "v0.1"
+  branch types
+  checkout types
+  commit id: "catalog"
+  commit id: "32 examples"
+  checkout main
+  branch fix/headers
+  checkout fix/headers
+  commit id: "-beta hints" type: REVERSE
+  checkout main
+  merge fix/headers tag: "v0.2"
+  checkout types
+  commit id: "smoke test" type: HIGHLIGHT
+  checkout main
+  merge types tag: "v1.0"
+  branch readme
+  checkout readme
+  commit id: "baked SVGs"
+  checkout main
+  merge readme

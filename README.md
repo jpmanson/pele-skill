@@ -24,6 +24,40 @@ Write a `.mmd` file, render it, and branch on the result. Green is a file. Red i
 
 One call. Pele returns an SVG, or the line and column of the syntax error.
 
+## Beyond flowcharts
+
+Flowcharts and sequences are a small part of the 32 types. These five come from the same skill, and their sources are in the same folder.
+
+<p align="center">
+  <img src="docs/images/release-train.svg" alt="Git graph of this skill's history: types and fix branches merged into main, tagged v0.1, v0.2, and v1.0" width="601">
+</p>
+
+`gitGraph`: branches, merges, tags, and highlighted or reverted commits.
+
+<p align="center">
+  <img src="docs/images/diagram-flow.svg" alt="Sankey diagram of agents flowing into diagram types and then into SVG or HTML output" width="680">
+</p>
+
+`sankey`: weighted flows from three CSV columns. The numbers here are made up.
+
+<p align="center">
+  <img src="docs/images/diagrams-as-code.svg" alt="Timeline of diagrams as code, from Graphviz in 1991 to Pele today" width="900">
+</p>
+
+`timeline`: dated events grouped into sections.
+
+<p align="center">
+  <img src="docs/images/renderers.svg" alt="Radar chart comparing Pele with mermaid-cli and Chromium on six axes" width="640">
+</p>
+
+`radar-beta`: series compared on shared axes. The scores are a judgment call, not a benchmark. mermaid-cli wins on fidelity because it is mermaid.js.
+
+<p align="center">
+  <img src="docs/images/why-mermaid.svg" alt="Venn diagram of people, agents, and git, with Mermaid in the middle" width="487">
+</p>
+
+`venn-beta`: overlapping sets with labeled intersections.
+
 ## Requirements
 
 - Node.js 20 or newer
