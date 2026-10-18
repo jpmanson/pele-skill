@@ -1,0 +1,18 @@
+---
+title: From Mermaid to SVG
+---
+flowchart LR
+  A[Write .mmd] --> B[render.mjs]
+  B --> C{Valid?}
+  C -->|yes| D[SVG file]
+  C -->|no| E[Fix the line]
+  classDef step fill:#f2f0e5,stroke:#cecdc3,color:#100f0f
+  classDef tool fill:#dce6f5,stroke:#205ea6,color:#100f0f
+  classDef ask fill:#f6e7c1,stroke:#ad8301,color:#100f0f
+  classDef ok fill:#e7f0dc,stroke:#66800b,color:#100f0f
+  classDef bad fill:#f6e2dd,stroke:#af3029,color:#100f0f
+  class A step
+  class B tool
+  class C ask
+  class D ok
+  class E bad

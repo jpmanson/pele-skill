@@ -1,0 +1,21 @@
+---
+title: Same skill, three agents
+---
+flowchart LR
+  subgraph agents [Agents]
+    CC[Claude Code]
+    H[Hermes]
+    OC[OpenCode]
+  end
+  S[SKILL.md] --> R[render.mjs]
+  R --> P[Pele]
+  P --> O[SVG]
+  CC --> S
+  H --> S
+  OC --> S
+  classDef agent fill:#f2f0e5,stroke:#cecdc3,color:#100f0f
+  classDef core fill:#dce6f5,stroke:#205ea6,color:#100f0f
+  classDef out fill:#e7f0dc,stroke:#66800b,color:#100f0f
+  class CC,H,OC agent
+  class S,R,P core
+  class O out

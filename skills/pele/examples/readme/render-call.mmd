@@ -1,0 +1,11 @@
+---
+title: One render call
+---
+sequenceDiagram
+  participant Agent
+  participant Script as render.mjs
+  participant Pele
+  Agent->>Script: diagram.mmd
+  Script->>Pele: render(source)
+  Pele-->>Script: svg, or line and column
+  Script-->>Agent: path, or exit 1
