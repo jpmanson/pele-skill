@@ -5,6 +5,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { catalog, suggest } from './catalog.mjs';
 
 const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -21,6 +22,7 @@ A JSON receipt is written to stderr. SVG (or HTML) goes to the output path, or s
 
 Options:
   --check              Load Pele and print its version. Installs it first if needed.
+  --types              Print every supported type, its header, and an example path (JSON, stdout)
   --html               Wrap the SVG in a standalone HTML file
   --responsive         Let the SVG shrink to its container
   --fixed              Fixed pixel size (default when writing a .svg file)
@@ -35,6 +37,7 @@ Options:
 function parseArgs(argv) {
   const opts = {
     check: false,
+    types: false,
     html: false,
     responsive: null,
     maxWidth: undefined,
@@ -54,6 +57,7 @@ function parseArgs(argv) {
       return value;
     };
     if (arg === '--check') opts.check = true;
+    else if (arg === '--types') opts.types = true;
     else if (arg === '--html') opts.html = true;
     else if (arg === '--responsive') opts.responsive = true;
     else if (arg === '--fixed') opts.responsive = false;
@@ -89,6 +93,7 @@ function ensurePele() {
     const result = spawnSync('npm', ['install', '--no-fund', '--no-audit'], {
       cwd: skillRoot,
       encoding: 'utf8',
+      shell: process.platform === 'win32',
     });
     if (result.status !== 0) {
       fail({
@@ -168,6 +173,13 @@ async function main() {
     process.stdout.write(usage());
     return;
   }
+  if (opts.types) {
+    const types = catalog
+      .filter((entry) => entry.type !== 'info')
+      .map(({ type, header, use }) => ({ type, header, use, example: join(skillRoot, 'examples', 'types', `${type}.mmd`) }));
+    process.stdout.write(`${JSON.stringify(types, null, 1)}\n`);
+    return;
+  }
 
   const pele = await ensurePele();
   const version = peleVersion();
@@ -194,14 +206,26 @@ async function main() {
   try {
     rendered = pele.render(source, options);
   } catch (error) {
-    fail({
+    const payload = {
       code: error.code || 'render-failed',
       message: error.message,
       type: error.type ?? null,
       line: error.line ?? 0,
       column: error.column ?? 0,
       snippet: error.snippet ?? '',
-    });
+    };
+    if (payload.code === 'unsupported-diagram') {
+      const matches = suggest(source);
+      payload.hint = matches.length
+        ? `Replace the first line with the header below. Many types need the -beta suffix.`
+        : 'The first line must be a diagram header. Run --types for the list.';
+      payload.suggest = matches.map(({ type, header }) => ({
+        type,
+        header,
+        example: join(skillRoot, 'examples', 'types', `${type}.mmd`),
+      }));
+    }
+    fail(payload);
   }
 
   const body = asHtml ? wrapHtml(rendered.svg) : rendered.svg;

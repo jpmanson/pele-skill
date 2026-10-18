@@ -1,0 +1,10 @@
+swimlane-beta LR
+  subgraph Customer
+    request[Request refund]
+  end
+  subgraph Support
+    review{Eligible?}
+    pay[Issue refund]
+  end
+  request --> review
+  review -->|yes| pay

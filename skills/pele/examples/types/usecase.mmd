@@ -1,0 +1,9 @@
+usecase-beta
+direction LR
+actor Customer
+systemBoundary Store
+  Browse("Browse catalog")
+  Checkout("Checkout")
+end
+Customer --> Browse
+Customer --> Checkout

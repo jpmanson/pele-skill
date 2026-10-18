@@ -2,9 +2,11 @@
 // Render the bundled examples and one known-bad source. Exit non-zero on failure.
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { catalog } from './catalog.mjs';
 
 const skillRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const render = join(skillRoot, 'scripts', 'render.mjs');
@@ -47,9 +49,26 @@ if (check.status !== 0 || !checkReceipt.ok || !checkReceipt.pele) {
   process.exit(1);
 }
 
+// The catalog must name exactly Pele's DiagramType union, and each header must detect as its type.
+const peleEntry = createRequire(join(skillRoot, 'package.json')).resolve('pele');
+const pele = await import(pathToFileURL(peleEntry).href);
+const declared = readFileSync(join(dirname(peleEntry), 'detect.d.ts'), 'utf8');
+const union = new Set([...declared.matchAll(/'([A-Za-z0-9]+)'/g)].map((m) => m[1]));
+const known = new Set(catalog.map((entry) => entry.type));
+const notInCatalog = [...union].filter((type) => !known.has(type));
+const notInPele = [...known].filter((type) => !union.has(type));
+const badHeaders = catalog
+  .filter(({ type, header }) => pele.detectType(header) !== type || !pele.registered(type))
+  .map(({ type, header }) => ({ type, header, detected: pele.detectType(header) }));
+if (!union.size || notInCatalog.length || notInPele.length || badHeaders.length) {
+  console.error({ notInCatalog, notInPele, badHeaders });
+  process.exit(1);
+}
+
 const cases = [
   ['examples/flowchart.mmd', 'flow.svg', 'flowchart'],
   ['examples/sequence.mmd', 'seq.svg', 'sequence'],
+  ...catalog.map(({ type }) => [`examples/types/${type}.mmd`, `type-${type}.svg`, type]),
 ];
 const rendered = [];
 for (const [input, name, type] of cases) {
@@ -86,10 +105,25 @@ if (bad.status === 0 || badReceipt.ok !== false || badReceipt.code !== 'syntax' 
   process.exit(1);
 }
 
+const noBeta = run(['-'], 'radar\n  title Skills\n');
+const noBetaReceipt = receipt(noBeta);
+if (noBeta.status === 0 || noBetaReceipt.code !== 'unsupported-diagram'
+  || noBetaReceipt.suggest?.[0]?.header !== 'radar-beta') {
+  console.error(noBetaReceipt);
+  process.exit(1);
+}
+
+const types = JSON.parse(run(['--types']).stdout);
+if (types.length !== catalog.length - 1 || types.some((entry) => !entry.header || !entry.example)) {
+  console.error(types);
+  process.exit(1);
+}
+
 rmSync(outDir, { recursive: true, force: true });
 console.log(JSON.stringify({
   ok: true,
   pele: checkReceipt.pele,
-  rendered,
+  types: types.length,
+  rendered: rendered.map(({ type }) => type),
   syntaxError: { code: badReceipt.code, line: badReceipt.line, column: badReceipt.column },
 }));

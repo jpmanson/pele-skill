@@ -1,0 +1,8 @@
+agentflow-beta TB
+  flow intake["Intake"]
+    receive["Receive request"]@{ shape: input }
+  end
+  flow work["Processing"]
+    validate["Validate"]@{ shape: task }
+  end
+  receive --> validate

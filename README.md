@@ -98,7 +98,7 @@ A syntax error exits 1 and names the line:
 {"ok":false,"code":"syntax","line":2,"column":5,"snippet":"..."}
 ```
 
-`--check` only loads Pele and prints its version. `npm run smoke` renders the bundled examples and asserts that `examples/broken.mmd` still fails.
+`--check` only loads Pele and prints its version. `--types` prints every supported type with its exact header and an example path. `npm run smoke` renders one example per type, checks the catalog against Pele's type list, and asserts that `examples/broken.mmd` still fails.
 
 Agents should follow `skills/pele/SKILL.md`: write a `.mmd` file, run the script, fix `syntax` / `semantic` errors from the receipt, and hand back the absolute path. They should not call mermaid-cli and should not add an MCP server for this.
 
@@ -110,10 +110,12 @@ The README figures are a separate export. `render.mjs` keeps CSS variables so a 
 skills/pele/
   SKILL.md                 # instructions the agent loads
   package.json             # pins pele@1.6.0
-  scripts/render.mjs       # Mermaid file -> SVG or HTML
+  scripts/render.mjs       # Mermaid file -> SVG or HTML; --types lists the 32 types
+  scripts/catalog.mjs      # type, exact header, and use for each type
   scripts/export-readme.mjs
   scripts/smoke.mjs
   examples/                # flowchart, sequence, one broken source
+  examples/types/          # one working source per diagram type
   examples/readme/         # sources for the figures above
   references/diagram-types.md
 docs/images/               # baked SVGs embedded in this README
