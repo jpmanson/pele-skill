@@ -30,6 +30,9 @@ Options:
   --font-size <px>     Base font size (Pele default 16)
   --font <family>      Label font (Pele default sans-serif)
   --id-prefix <str>    Prefix for title/desc ids (default pele)
+  --static-colors      Replace CSS custom properties with their fallback colors, so
+                       rsvg-convert, ImageMagick, Inkscape and PDF tools that ignore
+                       var() do not paint fills black. Use before converting to PNG/PDF.
   -h, --help           Show this help
 `;
 }
@@ -44,6 +47,7 @@ function parseArgs(argv) {
     fontSize: undefined,
     font: undefined,
     idPrefix: 'pele',
+    staticColors: false,
     help: false,
     positional: [],
   };
@@ -65,6 +69,7 @@ function parseArgs(argv) {
     else if (arg === '--font-size') opts.fontSize = numberFlag(arg, next());
     else if (arg === '--font') opts.font = next();
     else if (arg === '--id-prefix') opts.idPrefix = next();
+    else if (arg === '--static-colors') opts.staticColors = true;
     else if (arg === '-h' || arg === '--help') opts.help = true;
     else if (arg === '-') opts.positional.push(arg);
     else if (arg.startsWith('-')) fail({ code: 'usage', message: `Unknown option ${arg}` });
@@ -160,6 +165,34 @@ ${svg}
 `;
 }
 
+// Pele colors shapes with CSS custom properties: the root <svg style> declares
+// --_x:var(--pele-y,#fallback) and shapes use fill="var(--_x)". Renderers without
+// custom-property support paint those black. Resolve every var() to a concrete value.
+function staticColors(svg) {
+  const defs = new Map();
+  const root = svg.match(/<svg\b[^>]*\bstyle="([^"]*)"/);
+  if (root) {
+    for (const decl of root[1].split(';')) {
+      const at = decl.indexOf(':');
+      if (at > 0) defs.set(decl.slice(0, at).trim(), decl.slice(at + 1).trim());
+    }
+  }
+  const pattern = /var\((--[\w-]+)(?:,\s*([^()]*(?:\([^()]*\))?[^()]*))?\)/g;
+  const resolveVars = (text, depth = 0) => {
+    let prev;
+    let out = text;
+    do {
+      prev = out;
+      out = out.replace(pattern, (_, name, fallback) => {
+        if (defs.has(name) && depth < 10) return resolveVars(defs.get(name), depth + 1);
+        return fallback != null ? resolveVars(fallback, depth + 1) : 'currentColor';
+      });
+    } while (out !== prev);
+    return out;
+  };
+  return resolveVars(svg);
+}
+
 function readSource(input) {
   if (input === '-') return stripFence(readFileSync(0, 'utf8'));
   const path = resolve(input);
@@ -228,7 +261,8 @@ async function main() {
     fail(payload);
   }
 
-  const body = asHtml ? wrapHtml(rendered.svg) : rendered.svg;
+  const svg = opts.staticColors ? staticColors(rendered.svg) : rendered.svg;
+  const body = asHtml ? wrapHtml(svg) : svg;
   if (outputPath) {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, body);
@@ -243,6 +277,7 @@ async function main() {
     bytes: Buffer.byteLength(body),
     output: outputPath,
     html: asHtml,
+    staticColors: opts.staticColors,
     pele: version,
   }));
 }

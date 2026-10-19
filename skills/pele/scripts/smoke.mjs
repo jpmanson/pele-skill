@@ -98,6 +98,16 @@ if (html.status !== 0 || !htmlReceipt.html || !htmlBody.includes('<svg') || !htm
   process.exit(1);
 }
 
+// --static-colors must leave no CSS custom property for rasterizers to miss.
+const flat = run(['--static-colors', join(skillRoot, 'examples/flowchart.mmd'), join(outDir, 'flat.svg')]);
+const flatReceipt = receipt(flat);
+const flatBody = readFileSync(join(outDir, 'flat.svg'), 'utf8');
+const plainBody = readFileSync(join(outDir, 'flow.svg'), 'utf8');
+if (flat.status !== 0 || !flatReceipt.staticColors || /var\(/.test(flatBody) || !/var\(/.test(plainBody)) {
+  console.error(flatReceipt, 'var() left:', (flatBody.match(/var\(--[\w-]+/g) || []).slice(0, 5));
+  process.exit(1);
+}
+
 const bad = run([join(skillRoot, 'examples/broken.mmd'), join(outDir, 'bad.svg')]);
 const badReceipt = receipt(bad);
 if (bad.status === 0 || badReceipt.ok !== false || badReceipt.code !== 'syntax' || !badReceipt.line) {
