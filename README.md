@@ -38,7 +38,7 @@ Flowcharts and sequences are a small part of the 32 types. These five come from 
   <img src="docs/images/diagram-flow.svg" alt="Sankey diagram of agents flowing into diagram types and then into SVG or HTML output" width="680">
 </p>
 
-`sankey`: weighted flows from three CSV columns. The numbers here are made up.
+`sankey`: weighted flows from three CSV columns.
 
 <p align="center">
   <img src="docs/images/diagrams-as-code.svg" alt="Timeline of diagrams as code, from Graphviz in 1991 to Pele today" width="900">
@@ -50,7 +50,7 @@ Flowcharts and sequences are a small part of the 32 types. These five come from 
   <img src="docs/images/renderers.svg" alt="Radar chart comparing Pele with mermaid-cli and Chromium on six axes" width="640">
 </p>
 
-`radar-beta`: series compared on shared axes. The scores are a judgment call, not a benchmark. mermaid-cli wins on fidelity because it is mermaid.js.
+`radar-beta`: series compared on shared axes. mermaid-cli wins on fidelity because it is mermaid.js.
 
 <p align="center">
   <img src="docs/images/why-mermaid.svg" alt="Venn diagram of people, agents, and git, with Mermaid in the middle" width="487">
