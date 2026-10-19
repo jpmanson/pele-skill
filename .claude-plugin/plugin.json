@@ -1,0 +1,12 @@
+{
+  "name": "pele",
+  "version": "0.2.0",
+  "description": "Renders Mermaid diagrams (32 types) to SVG or HTML with Pele, without a browser.",
+  "author": {
+    "name": "Juan Pablo Manson"
+  },
+  "homepage": "https://github.com/jpmanson/pele-skill",
+  "repository": "https://github.com/jpmanson/pele-skill",
+  "license": "MIT",
+  "keywords": ["mermaid", "diagrams", "svg", "pele"]
+}

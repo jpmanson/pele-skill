@@ -1,0 +1,17 @@
+{
+  "name": "pele-skill",
+  "description": "Agent skill that renders Mermaid diagrams to SVG with Pele.",
+  "owner": {
+    "name": "Juan Pablo Manson"
+  },
+  "plugins": [
+    {
+      "name": "pele",
+      "source": "./",
+      "description": "Renders Mermaid diagrams (32 types) to SVG or HTML with Pele, without a browser.",
+      "version": "0.2.0",
+      "category": "productivity",
+      "keywords": ["mermaid", "diagrams", "svg"]
+    }
+  ]
+}
