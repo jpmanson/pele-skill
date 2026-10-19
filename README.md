@@ -68,7 +68,19 @@ The script installs `pele@1.6.0` into the skill directory on first run if `node_
 
 ## Install
 
-After this repo is on GitHub, one command covers the three agents:
+### Claude Code (plugin marketplace)
+
+This repo is also a Claude Code marketplace. Inside a session (Claude Code 2.1.275 or later):
+
+```
+/plugin install pele --marketplace jpmanson/pele-skill
+```
+
+Or from your shell: `claude plugin marketplace add jpmanson/pele-skill`, then `claude plugin install pele@pele-skill`. The skill runs as `/pele:pele`.
+
+### Claude Code, Hermes Agent, and OpenCode (skills CLI)
+
+One command covers the three agents:
 
 ```bash
 npx skills add jpmanson/pele-skill --skill pele -a claude-code -a hermes-agent -a opencode -g -y
