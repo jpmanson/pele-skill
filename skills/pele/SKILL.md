@@ -114,6 +114,7 @@ An `unsupported-diagram` receipt also has `hint` and `suggest`:
 | `--font-size <px>` | Base font size |
 | `--font <family>` | Label font |
 | `--id-prefix <str>` | Unique prefix when more than one SVG will share a page |
+| `--static-colors` | Resolve the CSS custom properties to plain colors. Required before converting to PNG or PDF |
 
 Stdout stays the SVG (or HTML). The receipt is always the last JSON line on stderr.
 
@@ -122,6 +123,7 @@ A surrounding ` ```mermaid ` fence is stripped. Mermaid's own frontmatter is not
 ## Pitfalls
 
 - File SVG defaults to `responsive: false`. Pass `--responsive` only when the SVG will be embedded and should shrink.
+- Pele colors shapes with CSS custom properties (`fill="var(--_l)"`). Browsers resolve them; `rsvg-convert`, ImageMagick and several PDF tools do not, and paint those fills black: edge-label boxes turn into solid black blocks. Render with `--static-colors` when the SVG goes to a PNG, PDF, slide or document, and look at the converted file, not only the SVG.
 - Node has no canvas measurer. Label widths can differ from a browser render. That is expected.
 - Do not pass `--max-width` unless the user asked for a narrow layout. It can change direction.
 - Headers are exact. `radar`, `venn`, `wardley`, `swimlane`, `treeView`, `usecase`, `cynefin`, `railroad`, `agentflow` all need `-beta`; `architecture` needs `-beta` too. There is no `fishbone` header; use `ishikawa-beta`.
