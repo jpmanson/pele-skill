@@ -5,6 +5,14 @@ on:
   pull_request:
 
 jobs:
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npx --yes @anthropic-ai/claude-code plugin validate --strict .
   smoke:
     runs-on: ubuntu-latest
     defaults:
