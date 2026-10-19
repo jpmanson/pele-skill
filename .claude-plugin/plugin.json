@@ -1,6 +1,6 @@
 {
   "name": "pele",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Renders Mermaid diagrams (32 types) to SVG or HTML with Pele, without a browser.",
   "author": {
     "name": "Juan Pablo Manson"
