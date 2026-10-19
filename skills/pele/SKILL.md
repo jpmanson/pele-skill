@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Node.js 20+ and npm. No browser. For Claude Code, Hermes Agent, and OpenCode.
 metadata:
   author: "Juan Pablo Manson"
-  version: "0.2.0"
+  version: "0.3.0"
   "opencode/slash": "true"
 ---
 
